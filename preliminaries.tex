@@ -1,0 +1,671 @@
+\chapter{Preliminaries} \label{prelims}
+
+The sections in this chapter cover some ideas relating to point-set topology and linear algebra that will be invoked in the main part of the text. Some sections are merely intended to establish notation; others cover topics that you may not have encountered before. I encourage skipping this chapter, and referring back to it only when you need to. 
+
+You should consult a dedicated linear algebra textbook to review the definitions of vector spaces, subspaces, linear independence, span, dimension, linear maps, matrices, matrix multiplication, determinants, and minors. You should also consult an analysis textbook to review the definitions of metric spaces, equivalence of metrics, open subsets, closed subsets, continuous maps, compactness, and connectedness.
+
+\section{Little-oh notation} \label{little-oh}
+
+Suppose $X$ is a metric space\footnotemark\ and $x_0 \in X$ is a point. 
+
+\footnotetext{Even more generally, $X$ could be a topological space here. See \cref{topological-spaces}.}
+
+\begin{definition}
+	A function $g : X \setminus \{x_0\} \to \R$ is \emph{positive} if $g(x) > 0$ for all $x \in X \setminus \{x_0\}$. Similarly, $g$ is \emph{non-negative} if $g(x) \geq 0$ for all $x \in X \setminus \{x_0\}$.
+\end{definition}
+
+Suppose $g$ is a positive function. \Cref{little-o-definition} below formulates what it means for a non-negative function $f : X \setminus \{x_0\} \to \R$ to be ``little-oh of $g$ as $x$ tends to $x_0$.'' Intuitively, this condition means that $f$ is \emph{much smaller} than $g$ near $x_0$. 
+
+\begin{definition} \label{little-o-definition}
+	A function $f : X \setminus \{x_0\} \to \R$ is \emph{little-oh of $g$ as $x$ tends to $x_0$}, written \[ f(x) = o(g(x)) \text{ as } x \to x_0 \] 
+	if, for every $\epsilon > 0$, there exists an open neighborhood $U$ of $x_0$ such that $|f(x)| \leq \epsilon g(x)$ for all $x \in U \setminus \{x_0\}$. Equivalently, this means that 
+	\[ \lim_{x \to x_0} \frac{|f(x)|}{g(x)} = 0. \]
+	When $x_0$ can be inferred from context, we write simply $f = o(g)$. 
+\end{definition} 
+
+\begin{remark}
+	It's worth noting that the use of the symbol ``$=$'' above is mathematically abusive. The left-hand side of the ``$=$'' is a function and the right-hand side is a property of functions; of course, a function cannot literally be equal to a property. Rather, the ``$=$'' is being used here to mean that the function on the left-hand side \emph{has} the property described on the right-hand side. As annoying as it is, this abuse of notation is fairly standard, so it's probably best to just get used to it. 
+\end{remark}
+
+\begin{exercise} \label{little-o-equivalent-exercise}
+	Prove that the two conditions in \cref{little-o-definition} are in fact equivalent. 
+\end{exercise}
+
+\begin{exercise}
+	Let $X = \R$ and $x_0 = 0$. For each of the functions $f$ and $g$ described below, sketch graphs of $f$ and $g$ and then determine whether or not $f = o(g)$ as $x \to 0$.
+	\begin{enumerate}[(a)]
+		\item $f(x) = x$ and $g(x) = x^2$. 
+		\item $f(x) = x$ and $g(x) = |x|$. 
+		\item $f(x) = x^2$ and $g(x) = |x|$. 
+	\end{enumerate}
+\end{exercise}
+
+\begin{exercise} \label{little-o-vector-space}
+	For a fixed positive function $g : X \setminus \{x_0\} \to \R$, prove that the set of functions $f : X \setminus \{x_0\} \to \R$ which are $o(g)$ as $x \to x_0$ is a vector space under the natural operations. In other words, verify the following three facts. 
+	\begin{enumerate}[(1)]
+		\item (``Zero is small'') The zero function is $o(g(x))$. 
+		\item (``Scalar multiples of small are still small'') If $c \in \R$ is a scalar and $f(x) = o(g(x))$, then 
+		\[ cf(x) = o(g(x)). \] 
+		\item (``Sum of smalls is still small'') If $f_1(x) = o(g(x))$ and $f_2(x) = o(g(x))$, then \[ (f_1 + f_2)(x) = o(g(x)). \]
+	\end{enumerate}
+\end{exercise}
+
+\begin{exercise}[``Smaller than small is still small''] \label{less-than-small-is-small}
+	Suppose $f_1, f_2 : X \setminus \{x_0\} \to \R$ are functions such that $|f_1(x)| \leq |f_2(x)|$ for all $x$ in a punctured neighborhood of $x_0$, and $f_2(x) = o(g(x))$ as $x \to x_0$. Then $f_1(x) = o(g(x))$ also. 
+\end{exercise}
+
+\begin{comment} 	
+\begin{exercise} \label{little-o-multiplicative}
+Suppose $f_1, f_2, g_1, g_2 : X \setminus \{x_0\} \to \R$ are functions with $g_1, g_2$ positive such that $f_1(x) = o(g_1(x))$ and $f_2(x) = o(g_2(x))$ as $x \to x_0$. Prove that $(f_1 \cdot f_2)(x) = o((g_1 \cdot g_2)(x))$.
+\end{exercise} 
+
+\begin{exercise}
+Suppose $f : X \to \R$ is continuous at $x_0$ and $f(x_0) = 0$, and that $f = o(g)$ as $x \to  x_0$ for some function $g : X \setminus\{x_0\} \to \R$. Suppose further that $s : \R \to \R$ is a function such that $s = o(|r|)$ as $r \to 0$. Then $s \circ f = o(g)$ as $x \to x_0$. 
+\end{exercise}
+
+\begin{proof}
+Suppose $\epsilon > 0$. We want to find an open neighborhood $U$ of $x_0$ such that
+\[ |s(f(x))| \leq \epsilon|t(g(x))| \]
+for $x \in U$. 
+
+Since $s$ is $o(t)$ as $r \to 0$, we know that for any $\epsilon_1 > 0$ there exists $\delta_1 > 0$ such that $|r| < \delta_1$ implies that
+\[ \begin{aligned} |s(r)| \leq \epsilon_1|t(r)|. \end{aligned} \] 
+Since $f(x_0) = 0$ and $f$ is continuous at $x_0$, there exists a neighborhood $U_1$ of $x_0$ such that
+\[ |f(x)| < \delta_1  \]
+for all $x \in U_1$. This means that for $x \in U_1$, we have
+\[ |s(f(x))| \leq \epsilon_1|t(f(x))|. \]
+Since $f = o(g)$ as $x \to x_0$, for any $\epsilon_2 > 0$ there is another neighborhood $U_2$ of $x_0$ such that $|f(x)| \leq \epsilon_2 |g(x)|$. This means that
+\[ |s(f(x))| \leq \epsilon_1 \epsilon_2 |g(x)|. \]
+
+there then exists $\delta_2 > 0$ such that $|h| < \delta$ implies that $|df_a(h) + r(h)| < \delta_1$. Then for $|h| < \delta_2$, we have
+\[ |s(df_a(h) + r(h)| \leq \epsilon_1 |df_a(h) + r(h)| 
+\leq \epsilon_1|f'(a)||h| + \epsilon_1|r(h)| \]
+Since $r$ is $o(|h|)$, for any $\epsilon_2 > 0$ there exists $\delta_3 > 0$ such that $|h| < \delta_3$ implies that $|r(h)| \leq \epsilon_2 |h|$. Let $\delta = \min\{\delta_2, \delta_3\}$. Then for $|h| < \delta$, we can continue the above chain of inequalities to obtain the following.  
+\[ |s(df_a(h) + r(h)| \leq \epsilon_1|f'(a)||h| + \epsilon_1 \epsilon_2|h| = \epsilon_1(|f'(a)| + \epsilon_2)|h| \]
+So we let $\epsilon_2 = 1$ and then let 
+\[ \epsilon_1 = \frac{\epsilon}{|f'(a)| + 1}. \]
+The $\delta$ obtained by going through the above process then has the desired property.
+\end{proof}
+\end{comment}
+
+\section{Product metric} \label{product-metric}
+
+\begin{exercise}
+	Suppose $X$ and $Y$ are metric spaces with metrics $d_X$ and $d_Y$, respectively. Define a function $d : (X \times Y) \times (X \times Y) \to \R$ by 
+	\[ d((x_1,y_1),(x_2,y_2)) = \max\{ d_X(x_1,x_2), d_Y(y_1,y_2) \}. \]
+	Show that $d$ is a metric on $X \times Y$. \index{product!product metric}
+\end{exercise}
+
+\begin{exercise}
+	Suppose $X$ and $Y$ are metric spaces with metrics $d_X$ and $d_Y$, respectively. Define a function $d : (X \times Y) \times (X \times Y) \to \R$ by 
+	\[ d((x_1,y_1),(x_2,y_2)) = \sqrt{ d_X(x_1,x_2)^2 + d_Y(y_1,y_2)^2 }. \]
+	Show that $d$ is a metric on $X \times Y$, and that it is equivalent to the metric from \cref{product-metric}.\index{product!product metric} 
+\end{exercise}
+
+\section{Norms on vector spaces}
+
+\begin{definition} \label{norm-definition} \index{norm}
+	Let $V$ be a vector space. A \emph{norm} $\|-\|$ on $V$ is a function $V \to \R$ satisfying the following two axioms. 
+	\begin{enumerate}[(N1)]
+		\item $|v| \geq 0$.
+		\item $|v| = 0$ if and only if $v = 0$. 
+		\item $|\lambda v| = |\lambda| |v|$ for all $\lambda \in \R$ and $v \in V$. 
+		\item $|v + w| \leq |v| + |w|$ for all $v, w \in V$.
+	\end{enumerate}
+\end{definition}
+
+\subsection{Norms induce metrics}
+
+\begin{exercise} \label{norm-induces-metric}
+	Suppose $\|-\|$ is a norm on a vector space $V$. Show that the function $d : V \times V \to \R$ given by $d(v, w) = |v-w|$ is a metric. 
+\end{exercise}
+
+\begin{exercise} \label{addition-continuous}
+	Suppose $|-|$ is a norm on a vector space $V$. Show that the function $V \times V \to V$ given by $(v, w) \mapsto v+w$ is continuous, where $V \times V$ is regarded as a metric space via one of the metrics defined in \cref{product-metric}.\index{product!product metric}  
+\end{exercise}
+
+\begin{exercise} \label{scalar-multiplication-continuous}
+	Suppose $|-|$ is a norm on a vector space $V$. Show that the function $\R \times V \to V$ given by $(\lambda, v) \mapsto \lambda v$ is continuous, where $\R \times V$ is regarded as a metric space via one of the metrics defined in \cref{product-metric}.\index{product!product metric} 
+\end{exercise}
+
+\begin{exercise} \label{bounded-continuous}
+	Suppose $|-|$ is a norm on a vector space $V$ and $|-|'$ is a norm on a vector space $W$ and $\ell : V \to W$ is a linear map. Then the following are equivalent. 
+	\begin{enumerate}[(a)]
+		\item $\ell$ is continuous.
+		\item There exists a constant $M > 0$ such that $|\ell(v)|' \leq M|v|$ for all $v \in V$. 
+	\end{enumerate}
+	\begin{hint}
+		The harder direction is (a) implies (b). For this direction, since $\ell$ is continuous at 0, there exists $\delta > 0$ such that $|\ell(v) - \ell(0)|' \leq 1$ whenever $|v-0| \leq \delta$. Then note that for any nonzero vector $v \in V$, the vector $\delta v/|v|$ is within $\delta$ of 0, so the above inequality applies. 
+	\end{hint}
+\end{exercise}
+
+\subsection{Equivalence of norms}
+
+\begin{definition} \label{norm-equivalence-definition} \index{equivalence!of norms}
+	Two norms $|-|$ and $|-|'$ on a vector space $V$ are \emph{equivalent} if there exist nonzero constants $C_1$ and $C_2$ such that
+	\[ C_1 |v| \leq |v|' \leq C_2 |v| \]
+	for all $v \in V$. 
+\end{definition}
+
+\begin{exercise}
+	If $V$ is a vector space, show that equivalence of norms is an equivalence relation on the set of all norms on $V$. 
+\end{exercise}
+
+\begin{exercise} \label{equivalent-norm-equivalent-metric}
+	Suppose $V$ is a vector space and $|-|$ and $|-|'$ are two equivalent norms on $V$. Show that the metrics $d$ and $d'$ corresponding to $|-|$ and $|-|'$ (cf. \cref{norm-induces-metric}) are equivalent. 
+\end{exercise}
+
+\subsection{Norms on finite dimensional vector spaces}
+
+If $V$ is a finite dimensional vector space, we can construct a number of norms on $V$ by choosing a basis. Of these, two are especially important: the max norm (also called the $L^\infty$ norm, which is often the most convenient), and the euclidean norm (also called the $L^2$ norm, which is the most common). 
+
+\begin{example} \label{max-norm} \index{max norm} \index{linfinity norm@$L^\infty$ norm|see {max norm}}
+	Suppose $V$ is a finite dimensional vector space, and $v_1, \dotsc, v_n$ is a basis for $V$. The \emph{$L^\infty$-norm}, also called the \emph{max norm}, on $V$ with respect to this basis is defined by
+	\[ |a_1v_1 + \dotsb + a_n v_n|_\infty = \max \{ |a_1|, \dotsc, |a_n| \}. \]
+	Axioms (N1) through (N3) are straightforward to verify. For the triangle inequality (N4), suppose $v = a_1 v_1 + \dotsb + a_n v_n$ and $w = b_1 v_1 + \dotsb +  b_n v_n$. Then
+	\[ \begin{aligned} |v +  w|_\infty &= \max\{ |a_1 + b_1| + \dotsb + |a_n + b_n|  \} \\
+	&\leq \max\{ |a_1| + |b_1|, \dotsb, |a_n| + |b_n| \} \\
+	&\leq \max\{ |a_1|, \dotsc, |a_n|\} + \max\{|b_1|, \dotsc,  |b_n| \} \\
+	&= |v|_\infty +  |w|_\infty \end{aligned} \]
+	where we used the triangle inequality for real numbers for the second step. 
+\end{example}
+
+\begin{example} \label{l2-norm} \index{l2 norm@$L^2$ norm}
+	Suppose $V$ is a finite dimensional vector space, and $v_1, \dotsc, v_n$ is a basis for $V$. The \emph{$L^2$ norm}, also called the \emph{euclidean norm}, on $V$ with respect to this basis is defined by
+	\[ |a_1v_1 + \dotsb + a_n v_n|_2 = \sqrt{a_1^2 + \dotsb + a_n^2}. \]
+	Axioms (N1) through (N3) are straightforward to verify. The triangle inequality is harder: see \cite[theorem 6.2]{protter-morrey}, for instance.  
+\end{example}
+
+The following states that these two norms are equivalent.  
+
+\begin{exercise} \label{max-euclidean}
+	Suppose $V$ is a finite dimensional vector space and $v_1, \dotsc, v_n$ is a basis for $V$. Show that, for any $v \in V$, we have \[ |v|_\infty \leq |v|_2 \leq \sqrt{n} |v|_\infty. \]
+\end{exercise} 
+
+In fact, here is vast generalization of \cref{max-euclidean}. 
+
+\begin{theorem} \label{finite-dim-norm}
+	If $V$ is a finite dimensional vector space, all norms on $V$ are equivalent.\index{equivalence!of norms}
+\end{theorem}
+
+{\color{blue} I'll add a proof of this eventually...}
+% TODO: do this
+
+\subsection{Sup norm on real-valued functions}
+
+Let $X$ be a set and consider the set of functions $X \to \R$. This set is naturally a vector space under pointwise operations: if $f, g : X \to \R$, then
+\[ (f+g)(x)= f(x) + g(x) \]
+and if $\lambda \in \R$, then
+\[ (\lambda f)(x) = \lambda f(x). \]
+
+\begin{definition} \label{sup-norm}
+	If $X$ is a set, we define the \emph{sup norm} of a function $f : X \to \R$, denoted either $\|f\|_{\spn,X}$ or just $\|f\|_{\spn}$ when $X$ can be inferred from context, by
+	\[ \|f\|_{\spn} = \sup_{x \in X} |f(x)|. \]
+	We say that $f$ is \emph{bounded} if $\|f\|_{\spn} < \infty$. 
+\end{definition}
+
+\begin{exercise}
+	Show that $\|-\|_\spn$ is a norm on the vector space of bounded functions $X \to \R$.
+\end{exercise}
+
+\begin{definition}[Uniform convergence]
+	A sequence of functions $f_n : X \to \R$ \emph{converges uniformly} to a function $f : X \to \R$ if, for every $\epsilon > 0$, there exists $N$ such that $\|f_n - f\|_\spn < \epsilon$ for all $n \geq N$. 
+\end{definition}
+
+\begin{definition}[Uniformly Cauchy sequences]
+	A sequence of functions $f_n : X \to \R$ is \emph{uniformly Cauchy} if, for every $\epsilon > 0$, there exists $N$ such that $\|f_m - f_n\|_\spn < \epsilon$ for all $m, n \geq N$. 
+\end{definition}
+
+\section{Euclidean space} \label{euclidean}
+
+For any non-negative integer $n$, we write $\R^n$ to denote the set of lists of $n$ real numbers. We will sometimes write its elements as horizontal lists of numbers separated by commas, as in \[ (h_1, \dotsc, h_n), \] and sometimes as vertical column of numbers, as in \[ \begin{bmatrix} h_1 \\ \vdots \\ h_n \end{bmatrix}.  \]
+The set $\R^n$ is also called \emph{$n$-dimensional euclidean space}.\index{euclidean space}
+
+\subsection{Linear structure on \texorpdfstring{$\R^n$}{Rn}}
+
+Given $v_1, v_2 \in \R^n$, we define their sum $v_1 + v_2$ by adding the entries coordinate-wise. Given $\lambda \in \R$ and $v \in \R$, we define $\lambda v$ by multiplying each entry of $v$ by $\lambda$. This endows $\R^n$ with the structure of a vector space. 
+
+For each $i = 1,  \dotsc, n$, we define the \emph{$i$th standard basis vector},\index{standard basis} denoted $e_i$, to be the list whose $i$th entry is 1 and all other entries are 0. 
+\[ \begin{aligned} e_1 &= (1, 0, 0, \dotsc, 0, 0) \\
+e_2 &= (0, 1, 0, \dotsc, 0, 0) \\
+&\enspace \vdots \\
+e_n &= (0, 0, 0, \dotsc, 0, 1) \end{aligned} \]
+Observe that
+\[ (h_1, \dotsc, h_n) = h_1 e_1 + h_2 e_2 + \dotsb + h_n e_n.  \]
+Thus the list $e_1, \dotsc, e_n$ is a basis for $\R^n$. 
+
+For any $i = 1, \dotsc, n$, we let $\pi_i : \R^n \to \R$ denote the $i$th \emph{projection map},\index{projection map} given by 
+\[ \pi_i(h_1, \dotsc, h_n) = h_i. \]
+This is a linear map. 
+
+\subsection{Norms on \texorpdfstring{$\R^n$}{Rn}}
+
+Using the standard basis $e_1, \dotsc, e_n$ of $\R^n$, we can define the euclidean (or $L^2$) and max (or $L^\infty$) norms (cf. \cref{l2-norm,max-norm}). Explicitly, if $h = (h_1, \dotsc, h_n) \in \R^n$, we have the following.  
+\[ \begin{aligned} 
+|h|_2 &= \sqrt{h_1^2 + \dotsb + h_n^2} \\
+|h|_\infty &= \max\{ |h_1|, \dotsc, |h_n| \}
+\end{aligned} \]
+For the most  part, it doesn't matter which of these norms you use. We'll use $|h|$ to denote either of them; in other words, you are free to interpret $|h|$ as either $|h|_2$ or $|h|_\infty$, whichever you like better. When we need to choose one over another, we'll explicitly specify this. Notice that, when $n = 1$, both of these norms are equal (both are just given by taking the absolute value of a real number). 
+
+\section{Matrices}
+
+The following is a whirlwind review of some facts about matrices, mostly intended to establish notation. The reader is expected to remember definitions of matrix multiplication, determinants, and minors. Few proofs are included in this section; for more details, you are encouraged to reference a dedicated linear algebra text.
+
+\begin{definition} \index{mnm@$\mathscr{M}_{n \times m}$}
+	We write $\mathscr{M}_{n \times m}$ for the set of all $n \times m$ matrices (ie, the matrices with $n$ rows and $m$ columns). This is naturally a vector space, where addition and scalar multiplication are defined entrywise.  
+\end{definition}
+
+\begin{definition} \index{gln@$\GL_n$}
+	Let $\GL_n$ denote the subset of $\mathscr{M}_{n \times n}$ consisting of invertible $n \times n$ matrices.
+\end{definition}
+
+\begin{lemma}
+	Let $A$ be a matrix. Then all of the following numbers are equal. 
+	\begin{enumerate}[(1)]
+		\item The dimension of the span of the columns of $A$. \item The dimension of the span of the rows of $A$. 
+		\item The size of largest nonzero minor of $A$. 
+	\end{enumerate}
+	This integer is called the \emph{rank} of $A$, and is denoted $\rank(A)$.\index{rank!of a matrix} 
+\end{lemma}
+
+\subsection{Matrix representations of linear maps} \label{matrix-representations}
+
+\begin{definition} \index{lvw@$\mathscr{L}(V,W)$}
+	If $V$ and $W$ are both vector spaces, we write $\mathscr{L}(V, W)$ for the set of all linear maps $V \to W$. This is naturally a vector space. 
+\end{definition}
+
+\begin{definition} \index{glv@$\GL(V)$}
+	If $V$ is a vector space, let $\GL(V)$ denote the set of invertible linear maps $V \to V$, regarded as a subset of $\mathscr{L}(V,V)$. 
+\end{definition}
+
+Throughout the rest of this section, we assume that $U$, $V$, and $W$ are finite dimensional vector spaces. 
+
+\begin{definition} \index{representation!of a vector}
+	Suppose $B$ denotes a basis $v_1, \dotsc, v_n$ for $V$. Then any $v \in V$ can be written uniquely as $a_1v_1 + \dotsb + a_n v_n$ for some scalars $a_1, \dotsc, a_n \in \R$, and we define the \emph{representation of $v$ with respect to $B$}, denoted $[v]_B$, to be the column vector with $n$ entries that records the scalars $a_1, \dotsc, a_n$. In other words,
+	\[ [v]_B = \begin{bmatrix} a_1 \\ \vdots \\ a_n \end{bmatrix}. \]
+\end{definition}
+
+\begin{lemma}
+	If $B$ denotes a basis $v_1, \dotsc, v_n$ is a basis for $V$, then the function $V \to \R^n$ given by $v \mapsto [v]_B$ is an isomorphism, with inverse given by
+	\[ \begin{bmatrix} a_1 \\ \vdots \\ a_n \end{bmatrix} \mapsto a_1 v_1 + \dotsb + a_n v_n. \]
+\end{lemma}
+
+\begin{definition} \label{matrix-representation-linear} \index{representation!of a linear map}
+	Suppose $\ell : V \to W$ is a linear map. Let $B$ and $C$ denote bases $v_1, \dotsc, v_m$ and $w_1, \dotsc, w_n$ for $V$ and $W$, respectively. The \emph{matrix representation of $\ell$ with respect to $B$ and $C$}, denoted $[\ell]_{B,C}$, is the $n \times m$ matrix whose $i$th column of $[\ell]_{B,C}$ is $[\ell(v_i)]_C$. In other words,
+	\[ [\ell]_{B,C} = \begin{bmatrix} [\ell(v_1)]_C & \dotsb & [\ell(v_m)]_C \end{bmatrix}. \]
+\end{definition}
+
+\begin{lemma} \label{matrix-rep-isomorphism}
+	Suppose that $V$ and $W$ are $m$- and $n$-dimensional vector spaces, respectively, and that and $B$ and $C$ are bases for $V$ and $W$, respectively. Then the function $\ell \mapsto [\ell]_{B,C}$ is an isomorphism \[ \begin{tikzcd} \mathscr{L}(V, W) \ar{r} & \mathscr{M}_{n,m}. \end{tikzcd} \] 
+\end{lemma}
+
+\begin{lemma}
+	If $\ell : V \to W$ is a linear map between finite dimensional vector spaces and $B$ and $C$ are bases for $V$ and $W$, respectively, then \[ [\ell]_{B,C}[v]_B = [\ell(v)]_C \]
+	for any $v  \in V$. 
+\end{lemma}
+
+\begin{lemma}
+	If $\ell : U \to V$ and $\ell' :  V \to W$ are linear maps, and $A, B$ and $C$ are bases for $U, V$, and $W$, respectively, then 
+	\[ [\ell' \circ \ell]_{A,C} = [\ell']_{B,C}[\ell]_{A,B}. \]
+\end{lemma}
+
+\begin{definition}
+	If $\ell : V \to W$ is a linear map, then the \emph{rank} of $\ell$, denoted $\rank(\ell)$ is defined to be the dimension of the range of $\ell$.\index{rank!of a linear map} 
+\end{definition}
+
+\begin{lemma}
+	If $\ell : V \to W$ is a linear map and $B$ and $C$ are bases for $V$ and $W$, respectively, then \[ \rank (\ell) = \rank [\ell]_{B,C}. \]
+\end{lemma}
+
+\begin{definition} \label{matrix-representation-standard} \index{representation!standard matrix representation} \index{standard matrix representation|see {representation, standard matrix representation}}
+	If $\ell : \R^m \to \R^n$ is a linear map, the \emph{standard matrix representation} of $\ell$, denoted $[\ell]$, is the matrix of $\ell$ with respect to the standard bases on $\R^m$ and $\R^n$.
+\end{definition} 
+
+\begin{lemma}
+	If $A$ is a $n \times m$ matrix and $\ell_A : \R^m \to \R^n$ is the linear map $\ell_A(v) = Av$, then \[ [\ell_A] = A. \]
+\end{lemma}
+
+\subsection{Matrix norm} \label{matrix-norm}
+
+Observe that $\mathscr{M}_{n \times m}$ is a finite dimensional vector space. If $E_{j,i}$ denotes the matrix whose $(j,i)$-entry is 1 and all other entries are 0 for $i = 1, \dotsc, m$ and $j = 1, \dotsc, n$, then the list of all of these $mn$ matrices forms a basis for $\mathscr{M}_{n \times m}$. We can use this basis to define a $L^2$ and max norm on $\mathscr{M}_{n \times m}$, as in \cref{l2-norm,max-norm}.\index{l2 norm@$L^2$ norm} \index{max norm} Explicitly, if $A$ is a $n \times m$ matrix whose $(j,i)$-entry (ie, the entry in row $j$ and column $i$) is $a_{j,i}$, we have the following. 
+\[ \begin{aligned} |A|_2 &= \sqrt{ \sum_{j,i} a_{j,i}^2 } \\
+|A|_\infty &= \max_{j,i} |a_{j,i}| \end{aligned}  \]
+We know from \cref{max-euclidean} that these two norms are equivalent. We'll write $|A|$ to denote either of these norms; in other words, when you see $|A|$, you can interpret this to mean either $|A|_2$ or $|A|_\infty$, whichever you like better. All of the following don't depend on which norm you're using. 
+
+\begin{lemma}
+	The function $\det : \mathscr{M}_{n \times n} \to \R$ is continuous.
+\end{lemma}
+
+\begin{proof}
+	Determinants can be computed using cofactor expansions,\index{cofactor expansion} so $\det A$ is a polynomial in the entries of $A$.
+\end{proof}
+
+\begin{corollary} \label{gln-open} \index{gln@$\GL_n$}
+	$\GL_n$ is an open subset of $\mathscr{M}_{n \times n}$.
+\end{corollary}
+
+\begin{proof}
+	Since $\det : \mathscr{M}_{n \times n} \to \R$ is continuous, and $\R \setminus \{0\}$ is an open subset of the codomain, we see that $\GL_n = \text{det}^{-1}(\R \setminus \{0\})$ must be open in $\mathscr{M}_{n \times n}$. 
+\end{proof}
+
+\begin{lemma} \label{matrix-inversion-homeomorphism} \index{gln@$\GL_n$} \index{homeomorphism}
+	The function $\GL_n \to \GL_n$ given by $A \mapsto A^{-1}$ is a homeomorphism.\index{homeomorphism} 
+\end{lemma}
+
+\begin{proof}
+	This function is its own inverse, so it is sufficient to show that $A \mapsto A^{-1}$ is continuous. But \[ A^{-1} = \det(A)^{-1} \adj(A), \]
+	where $\adj(A)$ denotes the adjugate matrix of $A$.\index{adjugate matrix} 
+	We know that $\det(A)$ is a polynomial in the entries of $A$. Each entry of $\adj(A)$ is a minor\index{minor} of $A$ and is therefore also a polynomial in the entries of $A$. The lemma follows. 
+\end{proof}
+
+The following generalizes \cref{gln-open}.
+
+\begin{lemma}
+	Suppose $k \leq \min\{m,n\}$. Then \[ Z = \{ A \in \mathscr{M}_{n \times m} : \rank(A) < k \} \]
+	is a closed subset of $\mathscr{M}_{n \times m}$. 
+\end{lemma}
+
+\begin{proof}
+	Saying $\rank(A) < k$ is equivalent to insisting that all $k \times k$ minors of $A$ vanish.\index{minor} Each $k \times k$ minor is a polynomial in the entries of $A$, so the zero set of any particular $k \times k$ minor is a closed subset of $\mathscr{M}_{n \times m}$. We then take the intersection of the closed subsets corresponding to all possible $k \times  k$ minors, and recall the fact that intersections of closed subsets must be closed.
+\end{proof}
+
+\section{Operator norm} \label{operator-norm}
+
+\subsection{Basics} \label{operator-norm-basic}
+
+\begin{definition} \label{operator-norm-definition} \index{operator norm}
+	Suppose $\ell : \R^m \to \R^n$ is a linear map. The \emph{operator norm} of $\ell$, denoted $\|\ell\|$, is defined to be
+	\[ \|\ell\| = \sup\, \{ |\ell(v)| : |v| \leq 1 \}. \]
+\end{definition} 
+
+If we're using the euclidean norms on $\R^m$ and $\R^n$, then we get one operator norm, which we denote by $\|\ell\|_2$ and call the \emph{euclidean (or $L^2$) operator norm} using the above definition. If we're using the max norms, then the above definition yields a different operator norm, which we denote by $\|-\|_\infty$ and call the \emph{max (or $L^\infty$) operator norm}. A lot of the basic properties of the operator norm work for either, so you can interpret the symbol $\|-\|$ to refer to either of them, whichever you like better. If we really need to distinguish one from the other, we'll indicate this explicitly. 
+
+Another important remark is that the operator norm $\|\ell\|$ is \emph{not} the same as the norm of the standard matrix representation $\|[\ell]\|$ as defined in \cref{matrix-norm}. 
+
+\begin{exercise} \label{operator-norm-reformulation}
+	Suppose $\ell : \R^m \to \R^n$ is a linear map. Show that 
+	\[ \|\ell\| = \inf \, \{ \lambda \in \R : |\ell(v)| \leq \lambda |v| \text{ for all } v \in \R^m \}. \]
+	In particular, this means that $|\ell(v)| \leq \|\ell\| \cdot |v|$ for all $v \in \R^m$. 
+\end{exercise}
+
+Here are some fundamental properties of the operator norm. 
+
+\begin{exercise} \label{operator-norm-is-norm}
+	Show that the operator norm is a norm on $\mathscr{L}(\R^m, \R^n)$ in the sense of \cref{norm-definition}. 
+\end{exercise}
+
+\begin{lemma} \label{norm-is-realized}
+	Suppose $\ell : \R^m \to \R^n$ is a nonzero linear map. Then there exists $v_0 \in \R^m$ such that $|v_0| = 1$ and $|\ell(v_0)| = \|\ell\|$. 
+\end{lemma}
+
+\begin{proof}
+	The ``unit disk'' \[ D = \{ x \in \R^m : |x| \leq 1 \} \]
+	is a nonempty compact subset of $\R^m$. The function $v \mapsto |\ell(v)|$ is a continuous function $D \to \R$, so its image $|\ell(D)|$ must also be a nonempty compact subset of $\R$. Thus there exists $v_0 \in D$ such that 
+	\[ |\ell(v_0)| = \sup |\ell(D)| = \|\ell\|. \]
+	Since $\ell \neq 0$, we know $\|\ell\| \neq 0$ from \cref{operator-norm-is-norm}, which in turn means that $v_0 \neq 0$. To prove that $|v_0| = 1$, assume for a contradiction that $|v_0| < 1$, and let $c = 1/|v_0| > 1$. Then $|cv_0| = |c||v_0| = 1$, so $cv_0 \in D$. But then
+	\[ |\ell(cv_0)| = |c\ell(v_0)| = c|\ell(v_0)| > |\ell(v_0)| = \sup |\ell(D)|, \]
+	which is absurd. 
+\end{proof}
+
+\begin{lemma} \label{linear-and-small}
+	Suppose $\ell : \R^m \to \R^n$ is a linear map and $|\ell(v)| = o(|v|)$ as $v \to 0$. Then $\ell = 0$. 
+\end{lemma}
+
+\begin{proof}
+The fact that $|\ell(v)| = o(|v|)$ tells us that
+\begin{equation} \label{big-sequence} \lim_{v \to 0} \frac{|\ell(v)|}{|v|} = 0. \end{equation}
+Suppose for a contradiction that $\ell \neq 0$. Using \cref{norm-is-realized}, choose $v_0 \in \R^m$ such that $|v_0| = 1$ and $|\ell(v_0)| = \|\ell\|$. For scalars $c$, observe that $cv_0 \to 0$ as $c \to 0$, which means that \cref{big-sequence} implies that
+\[ \lim_{c \to 0} \frac{|\ell(cv_0)|}{|cv_0|} = 0.  \]
+But observe that, for nonzero $c$, we have
+\[ \frac{|\ell(cv_0)|}{|cv_0|} = \frac{|c\ell(v_0)|}{|cv_0|} = \|\ell\| \]
+so
+\[ 0 = \lim_{c \to 0} \frac{|\ell(cv_0)|}{|cv_0|} = \lim_{c \to 0} \|\ell\| = \|\ell\|. \]
+This contradicts \cref{operator-norm-is-norm}. 
+\end{proof}
+
+\begin{exercise} \label{operator-norm-inverse}
+	If $\ell : \R^n \to \R^n$ is an invertible linear map, show that
+	\[ |\ell(v)| \geq \frac{|v|}{\|\ell^{-1}\|} \]
+	for all $v \in \R^n$. Conclude that $\|\ell\| \geq \|\ell^{-1}\|^{-1}$. 
+\end{exercise}
+
+\begin{exercise}[Submultiplicativity] \label{operator-norm-submultiplicative} \index{submultiplicativity}
+	Suppose $\ell : \R^m \to \R^n$ and $\ell' : \R^n \to \R^p$ are both linear maps. Show that \[ \|\ell' \circ \ell\| \leq \|\ell'\| \|\ell\|. \]
+	Give an example to show that this inequality can be strict. 
+\end{exercise}
+
+Here is one reason for preferring the max norms over the euclidean norms: there's an easy formula for the max operator norm in terms of the entries of a matrix representation.
+
+\begin{proposition} \label{max-operator-norm-characterization}
+	Let $\ell : \R^m \to \R^n$ be a linear map and let $A = [\ell]$ be its standard matrix representation. Then $\|\ell\|_\infty$ is the maximum absolute row sum of $A$. In other words, 
+	\[ \|\ell\|_\infty = \max_j \sum_{i = 1}^m |a_{j,i}| \]
+	where $a_{j,i}$ denotes the $(j,i)$-entry of $A$ (ie, the entry in row $j$ and column $i$). 
+\end{proposition}
+
+\begin{proof}
+	Let $M$ denote the maximum absolute row sum of $A$. In other words, 
+	\[ M = \max_j \sum_{i = 1}^m |a_{j,i}|. \]
+	If $h = (h_1, \dotsc, h_m) \in \R^m$ and $|h|_\infty \leq 1$, then $|h_i| \leq 1$ for all $i$ and
+	\begin{equation} \label{bound-max-absolute-row-sum} |\ell(h)|_\infty = \max_j \left| \sum_{i = 1}^n a_{j,i} h_i \right|  \leq \max_j \sum_{i = 1}^m |a_{j,i}| = M. \end{equation}
+	Taking the supremum over all $h$ such that $|h|_\infty \leq 1$ shows that $\|\ell\|_\infty \leq M$. 
+	
+	To prove equality, we will explicitly construct an $h \in \R^m$ with $|h|_\infty = 1$ such that $|\ell(h)|_\infty = M$. Let $k$ be an integer (between 1 and $n$) which achieves the maximum absolute row sum of $A$. In other words, $k$ is an integer such that
+	\[ \sum_{i = 1}^m |a_{k,i}| = M. \]
+	For each $i = 1, \dotsc, m$, let
+	\[ h_i = \begin{cases} 1 & \text{if } a_{k, i} \geq 0 \\ -1 & \text{if } a_{k, i} < 0  \end{cases} \]
+	and then consider the vector $h = (h_1, \dotsc, h_m) \in \R^m$. Observe that $|h|_\infty = 1$, and notice that the $k$th entry of $\ell(h) = Ah$ is 
+	\[ \sum_{i = 1}^m a_{k,i} h_i = \sum_{i = 1}^m |a_{k,i}| = M \]
+	by choice of $h$. Thus we have
+	\[ M \leq |\ell(h)|_\infty \leq M \]
+	where the first inequality is from the definition of the max norm, and the second inequality is from \cref{bound-max-absolute-row-sum}. Thus $|\ell(h)|_\infty = M$, completing the proof. 
+\end{proof}
+
+\subsection{Operator norm as a metric \texorpdfstring{$\star$}{*}}
+
+Since the operator norm is a norm by \cref{operator-norm-is-norm}, we can regard $\mathscr{L}(\R^m, \R^n)$ as a metric space by \cref{norm-induces-metric}. It turns out that many natural maps are continuous when we do this. 
+
+\begin{exercise}[``Evaluation is continuous''] \label{evaluation-continuous}
+	Suppose $v_0 \in \R^m$ is a fixed vector. Then the ``evaluate at $v_0$'' function $\mathscr{L}(\R^m, \R^n) \to \R^n$ given by $\ell \mapsto \ell(v_0)$ is continuous. \begin{hint} Since the ``evaluate at $v_0$'' function is linear, it is sufficient to check continuity at 0. \end{hint}
+\end{exercise}
+
+\begin{exercise}[``Composition is continuous''] \label{composition-continuous}
+	Show that the map
+	\[ \begin{tikzcd} \mathscr{L}(\R^n, \R^p) \times \mathscr{L}(\R^m, \R^n) \ar{r} & \mathscr{L}(\R^m, \R^p) \end{tikzcd} \]
+	given by $(\ell', \ell) \mapsto \ell' \circ \ell$ is continuous.\index{product!product metric} 
+\end{exercise}
+
+\begin{exercise} \label{max-matrix-norm-and-max-operator-norm}
+	Suppose $\ell : \R^m \to \R^n$ is linear and $A = [\ell]$ is its standard matrix representation. Prove that 
+	\[ |A|_\infty \leq \|\ell\|_\infty \leq m |A|_\infty. \]
+	\begin{hint}
+		Use \cref{max-operator-norm-characterization}.
+	\end{hint}
+\end{exercise}
+
+\begin{comment} \label{operator-and-matrix-norms}
+	Suppose $\ell : \R^m \to \R^n$ is linear and $A = [\ell]$ is its standard matrix representation.\index{representation!standard matrix representation} Prove the following. 
+	\begin{enumerate}[(a)]
+		\item $\|\ell\|_2 \leq |A|_2 \leq \sqrt{n} \|\ell\|_2$. 
+		\item $|A|_\infty \leq \|\ell\|_2 \leq \sqrt{mn} |A|_\infty$. 
+	\end{enumerate}
+\end{comment}
+
+% \cite[section 2.3.2]{golub}
+
+\begin{exercise} \label{matrix-to-maps-homeomorphism} \index{homeomorphism}
+	Show that the isomorphism $\mathscr{L}(\R^m, \R^n) \to \mathscr{M}_{n \times m}$ of \cref{matrix-rep-isomorphism}, given by $\ell \mapsto [\ell]$, is a homeomorphism. 
+\end{exercise}
+
+Under the homeomorphism\index{homeomorphism} $\mathscr{L}(\R^n, \R^n) \to \mathscr{M}_{n \times n}$ of \cref{matrix-to-maps-homeomorphism}, the set $\GL(\R^n)$ of invertible linear maps $\R^n \to \R^n$ corresponds to the set $\GL_n$ of invertible $n \times n$ matrices; since $\GL_n$ is an open subset of $\mathscr{M}_{n \times n}$ by  \cref{gln-open}, we conclude that $\GL(\R^n)$ is an open subset of $\mathscr{L}(\R^n, \R^n)$. Similarly, the following is a consequence of combining \cref{matrix-inversion-homeomorphism,matrix-to-maps-homeomorphism}. 
+
+\begin{exercise} \label{linear-map-inversion-homeomorphism} \index{homeomorphism}
+	Show that the map $\GL(\R^n) \to \GL(\R^n)$ given by $\ell \mapsto  \ell^{-1}$ is a homeomorphism.\index{glv@$\GL(V)$} 
+\end{exercise}
+
+\section{Topological spaces} \label{topological-spaces}
+
+This is a bare-bones introduction to topological spaces, intended for readers who have seen metric spaces but not topological spaces before. 
+
+\subsection{Basics} \label{topological-spaces-basics}
+
+\begin{definition} \label{topological-space-definition} \index{topology} \index{topological space} \index{open!open subset}
+	Let $X$ be a set. A \emph{topology} on $X$ is a set $\tau_X$ of subsets of $X$, called \emph{open} subsets, which satisfy the following axioms.
+	\begin{enumerate}[(T1)]
+		\item $\emptyset$ and $X$ are both open subsets. 
+		\item The union of an arbitrary collection of open subsets is open. 
+		\item The intersection of a finite collection of open subsets is open. 
+	\end{enumerate}
+	Also, a subset $F$ such that $X \setminus F$ is open is called a \emph{closed} subset of $X$. A pair $(X, \tau_X)$ consisting of a set $X$ and a topology $\tau$ on $X$ is called a \emph{topological space}. Often, we write simply ``$X$'' in place of the pair $(X, \tau_X)$. 
+\end{definition}
+
+\subsubsection*{Examples}
+
+Topological spaces come up throughout mathematics, and in general can be very very bizarre. We will not delve into the general theory of topological spaces, and won't see any of these bizarre examples. Instead, you are encouraged to content yourself with the following examples and constructions. 
+
+Here are some examples we've already seen. 
+
+\begin{example}[Metric spaces] \label{metric-to-topological}
+	If $X$ is a metric space, the collection of subsets of $X$ that are open with respect to the metric defines a topology on $X$. Thus, every metric space can be regarded as a topological space in a natural way. It's worth noticing that this process of regarding a metric space as a topological space ``forgets information,'' since equivalent metrics on a set will define the same topology. 
+\end{example}
+
+\begin{example} \label{finite-dim-canonical-topology} \index{canonical topology}
+	Suppose $V$ is a finite dimensional vector space. Then all norms on $V$ are equivalent by \cref{finite-dim-norm}, so they all define the same topology on $V$ by \cref{metric-to-topological,equivalent-norm-equivalent-metric}. This topology is called the \emph{canonical topology} on $V$. Unless explicitly specified otherwise, we will always regard finite dimensional vector spaces as topological spaces using the canonical topology. 
+\end{example}
+
+\begin{example} \label{discrete-topology}
+	Suppose $X$ is any set. The \emph{discrete topology} on $X$ is the one where \emph{all} subsets of $X$ are declared to be open. 
+\end{example}
+
+Here are a few ways of producing new topological spaces out of ones we already have. 
+
+\begin{example}[Subspace] \label{subspace-topology} \index{subspace} \index{subspace!subspace topology}
+	If $X$ is a topological space and $S$ is a subset, then the \emph{subspace topology} on $S$ is
+	\[ \tau_S := \{ S \cap U : U \in \tau_X \}. \]
+	Further, $S$ equipped with the subspace topology is called a \emph{subspace} of $X$. 
+\end{example}
+
+\begin{example}[Product spaces] \label{product-space} \index{product!product topology}
+	Suppose $X$ and $Y$ are topological spaces. We define a topology $\tau$ on the cartesian product $X \times Y$ by declaring a subset $U$ to be open if it is a union of sets of the form $V \times W$ where $U$ and $V$ are open subsets of $X$ and $Y$, respectively. This is called the \emph{product topology} on $X \times Y$. 
+\end{example}
+
+\begin{example}[Quotient spaces] \label{quotient-space} \index{quotient space}
+	Suppose $Y$ is any topological space, and let $\sim$ be an equivalence relation on $Y$. For an element $y \in Y$, let $[y]$ denote its equivalence class, and let $X = Y/\sim$ denote the set of all equivalence classes. There is a natural function $\pi : Y \to X$ given by sending a point $y \in Y$ to its equivalence class $[y]$. We define a topology on $X$, called the \emph{quotient topology}, by declaring a subset $U \subseteq X$ to be open if and only if its preimage \[ \pi^{-1}(U) = \{ y \in Y : [y] \in U \} \] is open in $Y$. 
+\end{example}
+
+And here is how subspaces and product spaces interact with metric spaces and finite dimensional vector spaces. 
+
+\begin{exercise} \label{metric-subspace}
+	Suppose $X$ is a metric space and $S$ is a subset. We can then regard $X$ as a topological space as in \cref{metric-to-topological} and then we have a subspace topology $\tau_1$ on $S$. On the other hand, we can restrict the metric on $X$ to a metric on $S$ to regard $S$ itself as a metric space, and then forget the metric and just remember the topology $\tau_2$ on $S$ as in \cref{metric-to-topological}. Show that $\tau_1 = \tau_2$. 
+\end{exercise}
+
+\begin{exercise}
+	Suppose $V$ is a finite dimensional vector space and $U$ is a subspace. If we regard $V$ as a topological space with the canonical topology of \cref{finite-dim-canonical-topology}, we can then give $U$ the subspace topology $\tau_1$. On the other hand, we can also regard $U$ as a vector space in its own right and give $U$ the canonical topology $\tau_2$. Show that $\tau_1 = \tau_2$.  
+\end{exercise}
+
+\subsubsection*{Continuous functions}
+
+\begin{definition}[Continuous functions] \label{continuous-definition} \index{continuous}
+	If $X$ and $Y$ are topological spaces, a function $f : X \to Y$ is \emph{continuous} if $f^{-1}(U)$ is an open subset of $X$ whenever $U$ is an open subset of $Y$. 
+\end{definition}
+
+Continuous functions are stable under composition. 
+
+\begin{exercise}
+	If $f : X \to Y$ and $g : Y \to Z$ are continuous functions between topological spaces, then $g \circ f$ is also continuous. 
+\end{exercise}
+
+The constructions we discussed above come equipped with associated continuous maps. 
+\begin{itemize}
+	\item If $X$ is a topological space and $S$ is a subspace, the inclusion map $i : S \to X$ is continuous. 
+	\item Suppose $X$ and $Y$ are topological spaces. Then the maps $\pi_X : X \times Y \to X$ given by $\pi_X(x,y) = x$ and $\pi_Y : X \times Y \to Y$ given by $\pi_Y(x,y) = y$ are both continuous. 
+	\item If $Y$ is a topological space, $\sim$ an equivalence relation on $Y$, and $X = Y/\sim$ the quotient space as in \cref{quotient-space} above, then the map $\pi : Y \to X$ which carries a point $y \in Y$ to its equivalence class is continuous.
+\end{itemize}
+
+The canonical topology\index{canonical topology} on a finite dimensional vector space we discussed in \cref{finite-dim-canonical-topology} above also has some nice continuity properties. 
+
+\begin{example}
+	If $V$ is a finite dimensional vector space, then the addition map $V \times V \to V$ and the scalar multiplication map $\R \times V \to V$ are continuous functions (where $V$ has the canonical topology\index{canonical topology} and $V \times V$ and $\R \times V$ have the product topologies \ref{product-space}). This statement is precisely the same as \cref{addition-continuous,scalar-multiplication-continuous}.
+\end{example}
+
+
+\begin{lemma} \label{linear-continuous}
+	Suppose $\ell : V \to W$ is a linear map between two finite dimensional vector spaces. Then $\ell$ is automatically continuous (with respect to the canonical topologies\index{canonical topology} on $V$ and $W$). 
+\end{lemma}
+
+\begin{proof}
+	Choose a basis $w_1, \dotsc, w_r$ for $\ell(V)$, and extend it to a basis $w_1, \dotsc, w_n$ for $W$. For each $w_1, \dotsc, w_r$, choose vectors $v_1, \dotsc, v_r$ such that $\ell(v_i) = w_i$. Linear independence of $w_1, \dotsc, w_r$ guarantees linear independence of $v_1, \dotsc, v_r$. Choose a basis $v_{r+1}, \dotsc, v_m$ for the null space $\ker(\ell)$. Then $v_1, \dotsc, v_r, v_{r+1}, \dotsc, v_m$ is a basis for $V$ (exercise). Now consider the max norms with respect to the bases $v_1, \dotsc, v_m$ on $V$ and $w_1, \dotsc, w_n$ on $W$, as in \cref{max-norm}. If $v = a_1 v_1 + \dotsb + a_n v_m$, we have 
+	\[ |\ell(v)|_\infty = |a_1w_1 + \dotsb + a_r w_r| = \max\{ |a_1|, \dotsc, |a_r| \} \leq \max\{ |a_1|, \dotsc, |a_n|\} =  |v|_\infty \]
+	so \cref{bounded-continuous} tells us that $\ell$ is continuous with respect to the max norm. Since the topologies determined by the max norms on $V$ and $W$ are precisely the canonical topologies (cf. \cref{finite-dim-canonical-topology}), we are done.  
+\end{proof}
+
+\subsubsection*{Open maps and homeomorphisms}
+
+\begin{definition}[Open map] \index{open!open map} \label{open-map-definition}
+	Suppose $X$ and $Y$ are topological spaces and $f : X \to Y$ is a function. Then $f$ is \emph{open} if $f(U)$ is an open subset of $Y$ whenever $U$ is an open subset of $X$. 
+\end{definition}
+
+\begin{definition}[Homeomorphisms] \index{homeomorphism} \index{homeomorphism!homeomorphism onto its image} \label{homeomorphism-definition}
+	Suppose $X$ and $Y$ are topological spaces and $f : X \to Y$ is a function. Then $f$ is a \emph{homeomorphism} if it is bijective, continuous, and $f^{-1} : Y \to X$ is continuous. More generally, $f$ is a \emph{homeomorphism onto its image} if is injective, continuous, and $f^{-1} : f(X) \to X$ is continuous (where $f(X)$ is regarded as a topological spaces with the subspace topology \ref{subspace-topology} that it inherits from $Y$). 
+\end{definition}
+
+Here is how these two notions are related to one another. 
+
+\begin{exercise} \label{opens-and-homeomorphisms}
+	Suppose $f : X \to Y$ is injective and continuous. 
+	\begin{enumerate}[(a)]
+		\item Suppose $f$ is open. Show that $f$ is a homeomorphism onto its image. 
+		\item Suppose $f : X \to Y$ is a homeomorphism onto its image and that $f(X)$ is an open subset of $Y$. Show that $f$ is open. 
+	\end{enumerate}
+\end{exercise}
+
+\begin{exercise}
+	Let $f : \R \to \R^2$ be the function $f(x) = (x,0)$. Show that $f$ is \emph{not} open, but that it \emph{is} a homeomorphism onto its image. 
+\end{exercise}
+
+\begin{example} \label{linear-isomorphism-homeomorphism}
+	Suppose $\ell : V \to W$ is an isomorphism of finite dimensional vector spaces. Then $\ell$ is continuous by \cref{linear-continuous}. But $\ell^{-1} : W \to V$ is also linear and hence continuous (again, by \cref{linear-continuous}), so $\ell$ is a homeomorphism. 
+\end{example}
+
+It's also possible to have continuous and open maps which are not homeomorphisms onto their images; such maps are necessarily not injective. Here is the key example. 
+
+\begin{exercise} \label{projections-are-open}
+	Let $X$ and $Y$ be topological spaces. Regard $X \times Y$ as a topological space with the product topology \ref{product-space} and let $\pi : X \times Y \to X$ be the projection map $\pi(x,y) = x$. Show that $\pi$ is open. 
+\end{exercise}
+
+\subsection{Hausdorff spaces \texorpdfstring{$\star$}{*}}
+
+\begin{definition}[Hausdorff] \index{hausdorff@Hausdorff}
+	A topological space $X$ is \emph{Hausdorff} if, for every pair of distinct points $x, y \in X$, there exist disjoint open subsets $U$ and $V$ containing $x$ and $y$, respectively. 
+\end{definition}
+
+\begin{example}
+	If $X$ is a metric space, the corresponding topological space as in \cref{metric-to-topological} is automatically Hausdorff. 
+\end{example}
+
+However, quotient spaces need not be Hausdorff. 
+
+\begin{exercise}
+	Let $Y = \R \times \{\pm 1 \}$ inside $\R^2$, and define an equivalence relation $\sim$ by declaring that $(a, 1) \sim (a,-1)$ for all $a \neq 0$. Show that $X = Y/\sim$ is not Hausdorff. 
+\end{exercise}
+
+\subsection{Compact and \texorpdfstring{$\sigma$}{sigma}-compact spaces \texorpdfstring{$\star$}{*}} 
+
+\begin{definition}[Open covers] \index{open cover} \index{open cover!subcover} \index{subcover|see {open cover, subcover}}
+	An \emph{open cover} of a topological space $X$ is a collection $\mathscr{U}$ of open subsets of $X$ which cover $X$, in the sense that \[ \bigcup_{U \in \mathscr{U}} U = X. \]
+	A \emph{subcover} of $\mathscr{U}$ is a subset $\mathscr{U}' \subseteq  \mathscr{U}$ which is itself an open cover. 
+\end{definition}
+
+\begin{definition}[Compact] \index{compact} \label{compact-topological-space}
+	A topological space $X$ is \emph{compact} if every open subcover has a finite subcover. 
+\end{definition}
+
+\begin{definition}[$\sigma$-compact] \index{sigma compact@$\sigma$-compact}
+	A topological space $X$ is \emph{$\sigma$-compact} if it is a countable union of compact subspaces. 
+\end{definition}
+
+\begin{example}
+	$\R^n$ is $\sigma$-compact, since
+	\[ \R^n = \bigcup_{k = 1}^\infty [-k,k]^n \]
+	and each hypercube $[-k,k]^n$ is compact. 
+\end{example}
+
